@@ -77,8 +77,8 @@ class Monitor:
             num_epochs (int): number of epochs of training
             verbose (bool, optional): if True, prints logs after every batch processed ; if False: prints logs after every epoch. Default: False
         """
-
-        for _ in range(num_epochs): self.one_epoch(verbose=verbose)
+        with torch.cuda.amp.autocast():
+            for _ in range(num_epochs): self.one_epoch(verbose=verbose)
     
     def one_epoch(self, verbose=False):
         """Performs one epoch of training
