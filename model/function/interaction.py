@@ -68,7 +68,7 @@ class Function(ABC):
         """Returns the value of the function evaluated at the current state of the variables
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the value of the function wrt an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the value of the function wrt an example in the current mini-batch
         """
         pass
 
@@ -121,7 +121,7 @@ class Function(ABC):
             mean (bool, optional): whether we compute the gradient of the mean of the function, or the sum of the function (over the mini-batch of examples). Default: False.
 
         Returns:
-            Tensor: the gradient of the function wrt the variable. Shape is (batch_size, layer_shape) if the variable is a Layer, or param_shape if it is a Parameter. Type is float32
+            Tensor: the gradient of the function wrt the variable. Shape is (batch_size, layer_shape) if the variable is a Layer, or param_shape if it is a Parameter. Type is float16
         """
 
         if variable.state.requires_grad == False:
@@ -151,7 +151,7 @@ class Function(ABC):
             variables (list of Tensor): the variables whose gradient we want to compute
 
         Returns:
-            Tensor: the gradient of the function wrt the variable. Shape is (batch_size, layer_shape) if the variable is a Layer, or param_shape if it is a Parameter. Type is float32
+            Tensor: the gradient of the function wrt the variable. Shape is (batch_size, layer_shape) if the variable is a Layer, or param_shape if it is a Parameter. Type is float16
         """
 
         bools = [variable.requires_grad for variable in variables]
@@ -184,7 +184,7 @@ class Function(ABC):
             direction (dict of Tensor): the direction in the state space in which we take the directional derivative of the function
 
         Returns:
-            Tensor: the gradient wrt the parameter of the directional derivative of the function (in the direction state). Shape is param_shape. Type is float32
+            Tensor: the gradient wrt the parameter of the directional derivative of the function (in the direction state). Shape is param_shape. Type is float16
         """
 
         # TODO: I think we only need to set param.state.requires_grad = True instead of setting all params' requires_grad attribute to True
@@ -304,7 +304,7 @@ class QFunction(Function, ABC):
             layer (Layer): the layer whose gradient we want to compute
 
         Returns:
-            Tensor of shape (batch_size, layer_shape). Type is float32
+            Tensor of shape (batch_size, layer_shape). Type is float16
         """
         a_fn = self.a_coef_fn(layer)
         b_fn = self.b_coef_fn(layer)
@@ -364,7 +364,7 @@ class BiasInteraction(LFunction):
         """Energy term of the bias.
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         return - self._layer.state.mul(self._bias.get()).flatten(start_dim=1).sum(dim=1)
@@ -383,7 +383,7 @@ class BiasInteraction(LFunction):
         """Returns the linear influence of the bias on the layer's state.
 
         Returns:
-            Tensor of shape (batch_size, layer_shape) and type float32: the linear contribution
+            Tensor of shape (batch_size, layer_shape) and type float16: the linear contribution
         """
 
         return - self._bias.get()
@@ -433,7 +433,7 @@ class NudgingInteraction(LFunction):
         """Energy function of the nudging interaction
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         return - self._layer.state.mul(self._force.state).flatten(start_dim=1).sum(dim=1)
@@ -447,7 +447,7 @@ class NudgingInteraction(LFunction):
         """Returns the linear influence of the bias on the layer's state.
 
         Returns:
-            Tensor of shape (batch_size, layer_shape) and type float32: the linear contribution
+            Tensor of shape (batch_size, layer_shape) and type float16: the linear contribution
         """
 
         return - self._force.state
@@ -456,7 +456,7 @@ class NudgingInteraction(LFunction):
         """Set the force of output nodes (used to set the output error values in equilibrium propagation)
 
         Args:
-            force (Tensor): tensor of shape (batch_size, output_size). Type is float32.
+            force (Tensor): tensor of shape (batch_size, output_size). Type is float16.
         """
 
         # TODO: check that the shape of the force tensor is the same as the output layer
@@ -492,7 +492,7 @@ class SumSeparableFunction(Function):
         """Returns the value of the function for the current configuration.
 
         Returns:
-            Tensor of shape (batch_size,) and type float32. Vector of values for each of the examples in the current mini-batch
+            Tensor of shape (batch_size,) and type float16. Vector of values for each of the examples in the current mini-batch
         """
 
         return sum([interaction.eval() for interaction in self._interactions])

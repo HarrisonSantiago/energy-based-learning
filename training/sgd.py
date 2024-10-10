@@ -42,7 +42,7 @@ class Nudging(Function):
         """Value of the nudging function. This is the function's value times the nudging value.
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the value of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the value of an example in the current mini-batch
         """
         return self._nudging * self._function.eval()
 
@@ -101,7 +101,7 @@ class AugmentedFunction(SumSeparableFunction):
         """Returns the value of the augmented function for the current configuration.
 
         Returns:
-            Tensor of shape (batch_size,) and type float32. Vector of values for each of the examples in the current mini-batch
+            Tensor of shape (batch_size,) and type float16. Vector of values for each of the examples in the current mini-batch
         """
 
         return self._energy_fn.eval() + self._nudging.eval()
@@ -251,7 +251,7 @@ class EquilibriumProp(GradientEstimator):
         To get a better gradient estimate, this method must be called when the layers are at their 'free state' (equilibrium for nudging=0).
         
         Returns:
-            param_grads: list of Tensor of shape param_shape and type float32. The parameter gradients
+            param_grads: list of Tensor of shape param_shape and type float16. The parameter gradients
         """
 
         # TODO: this implementation is likely suboptimal in the case of e.g. the Readout cost function
@@ -285,7 +285,7 @@ class EquilibriumProp(GradientEstimator):
             cumulative (bool, optional): if True, computes the cumulative gradients ; if False, computes the gradients increases. Default: True.
 
         Returns:
-            grads: dictionary of Tensor of shape variable_shape and type float32. The time-dependent gradients wrt the variables (layers and parameters)
+            grads: dictionary of Tensor of shape variable_shape and type float16. The time-dependent gradients wrt the variables (layers and parameters)
         """
 
         # First phase: compute the layers' activations along the first trajectory
@@ -466,7 +466,7 @@ class Backprop(GradientEstimator):
         """Computes the parameter gradients via backpropagation
         
         Returns:
-            param_grads: list of Tensor of shape param_shape and type float32. The parameter gradients
+            param_grads: list of Tensor of shape param_shape and type float16. The parameter gradients
         """
 
         # TODO: this implementation is likely suboptimal in the case of e.g. the Readout cost function
@@ -493,7 +493,7 @@ class Backprop(GradientEstimator):
         # TODO: can we merge ideas from this implementation with the other implementation, so that we get a linear algorithm that does not use backward()?
 
         Returns:
-            grads: dictionary of Tensor of shape variable_shape and type float32. The time-dependent gradients wrt the variables (layers and parameters)
+            grads: dictionary of Tensor of shape variable_shape and type float16. The time-dependent gradients wrt the variables (layers and parameters)
         """
 
         equilibrium_state = [layer.state for layer in self._layers]  # we store the state of the layers, so we can reset it to its initial state at the end of the method
@@ -547,7 +547,7 @@ class Backprop(GradientEstimator):
             cumulative (bool, optional): if True, computes the cumulative gradients ; if False, computes the gradients increases. Default: True.
 
         Returns:
-            grads: dictionary of Tensor of shape variable_shape and type float32. The time-dependent gradients wrt the variables (layers and parameters)
+            grads: dictionary of Tensor of shape variable_shape and type float16. The time-dependent gradients wrt the variables (layers and parameters)
         """
 
         # We store the initial state of the layers and parameters, so we can reset them at the end of the method
@@ -636,7 +636,7 @@ class RecurrentBackprop(GradientEstimator):
         To compute the correct gradients, the layers must be in their 'free state' (equilibrium) when calling the method
 
         Returns:
-            param_grads: list of Tensor of shape param_shape and type float32. The parameter gradients
+            param_grads: list of Tensor of shape param_shape and type float16. The parameter gradients
         """
 
         # TODO: we use all the layers (including the input layer). Need to check if this is fine
@@ -682,7 +682,7 @@ class RecurrentBackprop(GradientEstimator):
             cumulative (bool, optional): if True, computes the cumulative gradients ; if False, computes the gradients increases. Default: True.
 
         Returns:
-            grads: dictionary of Tensor of shape variable_shape and type float32. The time-dependent gradients wrt the variables (layers and parameters)
+            grads: dictionary of Tensor of shape variable_shape and type float16. The time-dependent gradients wrt the variables (layers and parameters)
         """
 
         equilibrium_state = [layer.state for layer in self._layers]  # we store the state of the layers at equilibrium
@@ -765,7 +765,7 @@ class ContrastiveLearning(EquilibriumProp):
         The weight updates depends on the coupled learning variant (positively-perturbed CpL, negatively-perturbed CpL, or centered CpL) and the nudging strength.
         
         Returns:
-            param_grads: list of Tensor of shape param_shape and type float32. The directions of the weight updates
+            param_grads: list of Tensor of shape param_shape and type float16. The directions of the weight updates
         """
 
         # TODO: this implementation is likely suboptimal in the case of e.g. the Readout cost function

@@ -35,7 +35,7 @@ class LayerUpdater(ABC):
         """Computes the pre-activation of the layer
 
         Returns:
-            Tensor of shape (batch_size, layer_shape). Type is float32
+            Tensor of shape (batch_size, layer_shape). Type is float16
         """
         pass
 

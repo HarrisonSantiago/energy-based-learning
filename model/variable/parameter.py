@@ -25,14 +25,14 @@ class Parameter(Variable, ABC):
         """Initializes an instance of Parameter
 
         Args:
-            shape (tuple of ints): Shape of the tensor used to represent the parameter. Type is float32.
+            shape (tuple of ints): Shape of the tensor used to represent the parameter. Type is float16.
             device (str): Either 'cpu' or 'cuda'.
             non_negative (bool, optional): whether the range of permissible values for the parameter's state is [0,infty] (True) or [-infty, +infty] (False). Default: False
         """
 
         Variable.__init__(self, shape)
 
-        self._state = torch.empty(*shape, dtype=torch.float32, device=device)
+        self._state = torch.empty(*shape, dtype=torch.float16, device=device)
         self._non_negative = non_negative
 
     def get(self):
@@ -59,7 +59,7 @@ class Bias(Parameter):
         """Initializes an instance of Bias
 
         Args:
-            shape (tuple of ints): Shape of the bias Tensor. Type is float32.
+            shape (tuple of ints): Shape of the bias Tensor. Type is float16.
         """
 
         Parameter.__init__(self, shape, device=device)
@@ -96,7 +96,7 @@ class DenseWeight(Parameter):
         Args:
             layer_pre_shape (tuple of ints): shape of the pre-synaptic layer
             layer_post_shape (tuple of ints): shape of the post-synaptic layer
-            gain (float32): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
+            gain (float16): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
             clamp (bool, optional): whether the range of permissible values for the parameter's state is [0,infty] (True) or [-infty, +infty] (False). Default: False
         """
 
@@ -116,7 +116,7 @@ class DenseWeight(Parameter):
     def init_state(self, gain, mode='kaiming_uniform'):
         """Initializes the weight tensor according to a uniform or normal distribution.
         Args:
-            gain (float32): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
+            gain (float16): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
             mode (str, optional): method to initialize the weight tensor. Either 'xavier_uniform', 'xavier_normal', 'kaiming_uniform' or 'kaiming_normal'. Default: 'xavier_uniform'.
         """
 
@@ -160,7 +160,7 @@ class ConvWeight(Parameter):
 
         Args:
             shape (tuple of ints): shape of the convolutional weight tensor. Shape is (out_channels, in_channels, height, width).
-            gain (float32): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
+            gain (float16): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
             clamp (bool, optional): whether the range of permissible values for the parameter's state is [0,infty] (True) or [-infty, +infty] (False). Default: False
         """
 
@@ -177,7 +177,7 @@ class ConvWeight(Parameter):
         """Initializes the weight tensor.
 
         Args:
-            gain (float32): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
+            gain (float16): Number used to scale the weight tensor (~ proportional to the standard deviations of the weight)
             mode (str, optional): method to initialize the weight tensor. Either 'xavier_uniform', 'xavier_normal', 'kaiming_uniform' or 'kaiming_normal'. Default: 'kaiming_normal'.
         """
 

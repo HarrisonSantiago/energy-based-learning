@@ -43,7 +43,7 @@ class Network():
         """Set the input layer to input values
 
         Args:
-            input_values: input image. Tensor of shape (batch_size, channels, width, height). Type is float32.
+            input_values: input image. Tensor of shape (batch_size, channels, width, height). Type is float16.
             reset (bool, optional): if True, resets the state of the network to zero.
         """
 

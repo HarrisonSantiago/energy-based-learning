@@ -33,7 +33,7 @@ class BiasInteraction(Function):
         """Energy function of the bias interaction
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         # FIXME: we need to broadcast the bias tensor to the same shape as the layer tensor, to make sure that the correct dimensions are multiplied together.
@@ -57,7 +57,7 @@ class BiasInteraction(Function):
         """Returns the interaction's gradient wrt the layer
 
         Returns:
-            Tensor of shape (batch_size, layer_shape) and type float32: the gradient
+            Tensor of shape (batch_size, layer_shape) and type float16: the gradient
         """
 
         # FIXME: we need to broadcast the bias tensor to the same shape as the layer tensor, to make sure that the correct dimensions are added together.
@@ -86,9 +86,9 @@ class DenseHopfield(Function):
     
     Attributes
     ----------
-    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_pre_shape). Type is float32.
-    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_post_shape). Type is float32.
-    _weight (DenseWeight): weight tensor between layer_pre and layer_post. Tensor of shape (layer_pre_shape, layer_post_shape). Type is float32.
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_pre_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_post_shape). Type is float16.
+    _weight (DenseWeight): weight tensor between layer_pre and layer_post. Tensor of shape (layer_pre_shape, layer_post_shape). Type is float16.
     """
 
     def __init__(self, layer_pre, layer_post, dense_weight):
@@ -116,7 +116,7 @@ class DenseHopfield(Function):
         pre * W is the tensor product of pre and W over the dimensions (1, 28, 28). The result is a tensor of shape (16, 2048).
         
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         layer_pre = self._layer_pre.state
@@ -143,7 +143,7 @@ class DenseHopfield(Function):
         This is the usual - weight * layer_post
 
         Returns:
-            Tensor of shape (batch_size, layer_pre_shape) and type float32: the gradient wrt layer_pre
+            Tensor of shape (batch_size, layer_pre_shape) and type float16: the gradient wrt layer_pre
         """
 
         layer_post = self._layer_post.state
@@ -159,7 +159,7 @@ class DenseHopfield(Function):
         This is the usual - layer_pre * weight
 
         Returns:
-            Tensor of shape (batch_size, layer_post_shape) and type float32: the gradient wrt layer_post
+            Tensor of shape (batch_size, layer_post_shape) and type float16: the gradient wrt layer_post
         """
 
         layer_pre = self._layer_pre.state
@@ -172,7 +172,7 @@ class DenseHopfield(Function):
         This is the usual Hebbian term, dE/dtheta = - layer_pre^T * layer_post
 
         Returns:
-            Tensor of shape weight_shape and type float32: the gradient wrt the weights
+            Tensor of shape weight_shape and type float16: the gradient wrt the weights
         """
 
         layer_pre = self._layer_pre.state
@@ -188,9 +188,9 @@ class ConvAvgPoolHopfield(Function):
     
     Attributes
     ----------
-    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_pre_shape). Type is float32.
-    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_post_shape). Type is float32.
-    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float32.
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_pre_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_post_shape). Type is float16.
+    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float16.
     _padding (int): padding of the convolution.
     """
 
@@ -198,9 +198,9 @@ class ConvAvgPoolHopfield(Function):
         """Creates an instance of ConvAvgPoolHopfield
         
         Args:
-            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post. Type is float32.
+            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post. Type is float16.
             padding (int, optional): padding of the convolution. Default: 0
         """
 
@@ -215,7 +215,7 @@ class ConvAvgPoolHopfield(Function):
         """Returns the energy of a convolutional interaction with average pooling.
         
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         layer_pre = self._layer_pre.state
@@ -240,7 +240,7 @@ class ConvAvgPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the pre-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_pre_shape) and type float32: the gradient wrt layer_pre
+            Tensor of shape (batch_size, layer_pre_shape) and type float16: the gradient wrt layer_pre
         """
 
         layer_post = self._layer_post.state
@@ -251,7 +251,7 @@ class ConvAvgPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the post-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_post_shape) and type float32: the gradient wrt layer_post
+            Tensor of shape (batch_size, layer_post_shape) and type float16: the gradient wrt layer_post
         """
 
         layer_pre = self._layer_pre.state
@@ -261,7 +261,7 @@ class ConvAvgPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the weight.
 
         Returns:
-            Tensor of shape weight_shape and type float32: the gradient wrt the weights
+            Tensor of shape weight_shape and type float16: the gradient wrt the weights
         """
 
         layer_pre = self._layer_pre.state
@@ -278,9 +278,9 @@ class ConvMaxPoolHopfield(Function):
 
     Attributes
     ----------
-    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float32.
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float16.
     _padding (int): padding of the convolution.
     """
 
@@ -288,8 +288,8 @@ class ConvMaxPoolHopfield(Function):
         """Creates an instance of ConvMaxPoolHopfield
 
         Args:
-            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
+            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
             conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post.
             padding (int, optional): padding of the convolution. Default: 0
         """
@@ -305,7 +305,7 @@ class ConvMaxPoolHopfield(Function):
         """Returns the energy of a convolutional interaction with max pooling.
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         layer_pre = self._layer_pre.state
@@ -330,7 +330,7 @@ class ConvMaxPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the pre-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_pre_shape) and type float32: the gradient wrt layer_pre
+            Tensor of shape (batch_size, layer_pre_shape) and type float16: the gradient wrt layer_pre
         """
 
         layer_pre = self._layer_pre.state
@@ -343,7 +343,7 @@ class ConvMaxPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the post-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_post_shape) and type float32: the gradient wrt layer_post
+            Tensor of shape (batch_size, layer_post_shape) and type float16: the gradient wrt layer_post
         """
 
         layer_pre = self._layer_pre.state
@@ -353,7 +353,7 @@ class ConvMaxPoolHopfield(Function):
         """Returns the gradient of the energy function wrt the weight.
 
         Returns:
-            Tensor of shape weight_shape and type float32: the gradient wrt the weights
+            Tensor of shape weight_shape and type float16: the gradient wrt the weights
         """
 
         layer_pre = self._layer_pre.state
@@ -372,9 +372,9 @@ class ConvSoftPoolHopfield(Function):
 
     Attributes
     ----------
-    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float32.
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float16.
     _padding (int): padding of the convolution.
     """
 
@@ -382,8 +382,8 @@ class ConvSoftPoolHopfield(Function):
         """Creates an instance of ConvSoftPoolHopfield
 
         Args:
-            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
+            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
             conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post.
             padding (int, optional): padding of the convolution. Default: 0
         """
@@ -400,7 +400,7 @@ class ConvSoftPoolHopfield(Function):
         """Returns the energy of a convolutional interaction with max pooling.
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy value of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy value of an example in the current mini-batch
         """
 
         def patch_wise_max(input, kernel_size, stride):
@@ -444,16 +444,16 @@ class ModernHopfield(Function):
 
     Attributes
     ----------
-    _layer (Layer): the layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _weight (DenseWeight): weight tensor between layer and the modern Hopfield layer. Type is float32.
+    _layer (Layer): the layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _weight (DenseWeight): weight tensor between layer and the modern Hopfield layer. Type is float16.
     """
 
     def __init__(self, layer, weight):
         """Creates an instance of ModernHopfield
 
         Args:
-            layer (Layer): the layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            weight (DenseWeight): weight tensor between layer and the modern Hopfield layer. Type is float32.
+            layer (Layer): the layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            weight (DenseWeight): weight tensor between layer and the modern Hopfield layer. Type is float16.
         """
 
         # TODO: parametrize by a 'temperature' alpha
@@ -467,7 +467,7 @@ class ModernHopfield(Function):
         """Returns the energy of a modern Hopfield interaction
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy value of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy value of an example in the current mini-batch
         """
 
         layer = self._layer.state
@@ -476,14 +476,106 @@ class ModernHopfield(Function):
         return - torch.log(torch.exp(torch.tensordot(layer, weight, dims=dims)).flatten(start_dim=1).sum(dim=1))
 
 
+#custom layer
+class ConvHopfield(Function):
+    """Convolutional interaction between two layers.
+
+    A convolutional interaction is defined between three variables: two adjacent layers, and the corresponding convolutional weight tensor between the two.
+
+    Attributes
+    ----------
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_pre_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_post_shape). Type is float16.
+    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float16.
+    _padding (int): padding of the convolution.
+    """
+
+    def __init__(self, layer_pre, layer_post, conv_weight, padding=0):
+        """Creates an instance of ConvAvgPoolHopfield
+
+        Args:
+            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post. Type is float16.
+            padding (int, optional): padding of the convolution. Default: 0
+        """
+
+        self._layer_pre = layer_pre
+        self._layer_post = layer_post
+        self._weight = conv_weight
+        self._padding = padding
+
+        Function.__init__(self, [layer_pre, layer_post], [conv_weight])
+
+    def eval(self):
+        """Returns the energy of a convolutional interaction with average pooling.
+
+        Returns:
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
+        """
+
+        layer_pre = self._layer_pre.state
+        layer_post = self._layer_post.state
+
+        return - F.conv2d(layer_pre, self._weight.get(), padding=self._padding).mul(layer_post).sum(dim=(3,2,1))  # Hebbian term: layer_pre * weight * layer_post
+
+    def grad_layer_fn(self, layer):
+        """Overrides the default implementation of Function"""
+        dictionary = {
+            self._layer_pre: self._grad_pre,
+            self._layer_post: self._grad_post
+            }
+        return dictionary[layer]
+
+    def grad_param_fn(self, param):
+        """Overrides the default implementation of Function"""
+        dictionary = {self._weight: self._grad_weight}
+        return dictionary[param]
+
+    def _grad_pre(self):
+        """Returns the gradient of the energy function wrt the pre-synaptic layer.
+
+        Returns:
+            Tensor of shape (batch_size, layer_pre_shape) and type float16: the gradient wrt layer_pre
+        """
+
+        layer_post = self._layer_post.state
+        return - F.conv_transpose2d(layer_post, self._weight.get(), padding=self._padding)
+
+    def _grad_post(self):
+        """Returns the gradient of the energy function wrt the post-synaptic layer.
+
+        Returns:
+            Tensor of shape (batch_size, layer_post_shape) and type float16: the gradient wrt layer_post
+        """
+
+        layer_pre = self._layer_pre.state
+        return - F.conv2d(layer_pre, self._weight.get(), padding=self._padding)
+
+    def _grad_weight(self):
+        """Returns the gradient of the energy function wrt the weight.
+
+        Returns:
+            Tensor of shape weight_shape and type float16: the gradient wrt the weights
+        """
+
+        layer_pre = self._layer_pre.state
+        layer_post = self._layer_post.state
+        batch_size = layer_pre.shape[0]
+
+
+        return - F.conv2d(layer_pre.transpose(0, 1), layer_post.transpose(0, 1), padding=self._padding).transpose(0, 1) / batch_size  # we divide by batch size because we want the mean gradient over the mini-batch
+
+
+
 '''class MaxPoolConvHopfield(Function):
     """Experimental Class. MaxPool is optional and before the convolution.
 
     Attributes
     ----------
-    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float32.
+    _layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+    _weight (ConvWeight): convolutional weight tensor between layer_pre and layer_post. Type is float16.
     _padding (int): padding of the convolution.
     _max_pool (bool): whether or not we perform max_pooling before the convolution.
     """
@@ -492,8 +584,8 @@ class ModernHopfield(Function):
         """Creates an instance of MaxPoolConvHopfield
 
         Args:
-            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
-            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float32.
+            layer_pre (Layer): pre-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
+            layer_post (Layer): post-synaptic layer. Tensor of shape (batch_size, layer_shape). Type is float16.
             conv_weight (ConvWeight): convolutional weights between layer_pre and layer_post.
             padding (int, optional): padding of the convolution. Default: 0
             max_pool (bool, optional): whether or not we perform max_pooling before the convolution. Default: False
@@ -511,7 +603,7 @@ class ModernHopfield(Function):
         """Returns the energy of a convolutional interaction with max pooling.
 
         Returns:
-            Vector of size (batch_size,) and of type float32. Each value is the energy term of an example in the current mini-batch
+            Vector of size (batch_size,) and of type float16. Each value is the energy term of an example in the current mini-batch
         """
 
         layer_pre = self._layer_pre.state
@@ -538,7 +630,7 @@ class ModernHopfield(Function):
         """Returns the gradient of the energy function wrt the pre-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_pre_shape) and type float32: the gradient wrt layer_pre
+            Tensor of shape (batch_size, layer_pre_shape) and type float16: the gradient wrt layer_pre
         """
 
 
@@ -555,7 +647,7 @@ class ModernHopfield(Function):
         """Returns the gradient of the energy function wrt the post-synaptic layer.
 
         Returns:
-            Tensor of shape (batch_size, layer_post_shape) and type float32: the gradient wrt layer_post
+            Tensor of shape (batch_size, layer_post_shape) and type float16: the gradient wrt layer_post
         """
 
         layer_pre = self._layer_pre.state
@@ -566,7 +658,7 @@ class ModernHopfield(Function):
         """Returns the gradient of the energy function wrt the weight.
 
         Returns:
-            Tensor of shape weight_shape and type float32: the gradient wrt the weights
+            Tensor of shape weight_shape and type float16: the gradient wrt the weights
         """
 
         layer_pre = self._layer_pre.state

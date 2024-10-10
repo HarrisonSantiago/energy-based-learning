@@ -17,7 +17,7 @@ class HopfieldLayerUpdater(LayerUpdater):
         """Computes the negative of the gradient of the (Hopfield energy) function wrt the layer's state, i.e. dE/dz, where E is the Hopfield energy function and z is the layer's state
 
         Returns:
-            Tensor of shape (batch_size, layer_shape). Type is float32
+            Tensor of shape (batch_size, layer_shape). Type is float16
         """
 
         return - self.grad()

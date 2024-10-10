@@ -158,7 +158,7 @@ class MeanStat(Statistic, ABC):
     Attributes
     ----------
     name (str): the name of the statistics
-    sum (float32): cumulative sum of the statistics
+    sum (float16): cumulative sum of the statistics
     num_steps (int): number of times the function "do_meaurement" has been called.
     percentage (bool): whether the statistics is played in percentage or not
     string (str): the string to be formatted.
